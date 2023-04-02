@@ -1,0 +1,27 @@
+import cv2
+import numpy as np
+import tensorflow as tf
+
+def extract_video_frames(video_path):
+    # Load the video
+    video = cv2.VideoCapture(video_path)
+    frames = []
+
+    while True:
+        ret, frame = video.read()
+        if not ret:
+            break
+        frames.append(frame)
+
+    video.release()
+    return frames
+
+def preprocess_video_frames(video_path):
+    # Load the video and extract frames
+    video_frames = extract_video_frames(video_path)
+
+    # Resize and preprocess the frames
+    preprocessed_frames = [cv2.resize(frame, (1080, 1080)) for frame in video_frames]
+    preprocessed_frames = np.array(preprocessed_frames)
+
+    return preprocessed_frames
