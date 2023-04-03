@@ -1,48 +1,34 @@
 import cv2
 
-def resize_video(input_path, output_path, target_width, target_height):
-    cap = cv2.VideoCapture(input_path)
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(output_path, fourcc, cap.get(cv2.CAP_PROP_FPS), (target_width, target_height))
+def start_video_processing():
+    # Your video source here (0 for the default camera, file path, or video stream URL)
+    video_source = 0
 
-    while cap.isOpened():
+    # Create a window for video display
+    cv2.namedWindow("Video Processing Demo", cv2.WINDOW_NORMAL)
+
+    # Initialize the video capture
+    cap = cv2.VideoCapture(video_source)
+
+    while True:
+        # Read a frame from the video source
         ret, frame = cap.read()
+
         if not ret:
             break
 
-        resized_frame = cv2.resize(frame, (target_width, target_height))
-        out.write(resized_frame)
+        # TODO: Add your video processing code here
 
-    cap.release()
-    out.release()
+        # Display the processed frame
+        cv2.imshow("Video Processing Demo", frame)
 
-def convert_frame_rate(input_path, output_path, target_frame_rate):
-    cap = cv2.VideoCapture(input_path)
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(output_path, fourcc, target_frame_rate, (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
-
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
+        # Press 'q' to exit the loop
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-        out.write(frame)
-
+    # Release resources
     cap.release()
-    out.release()
+    cv2.destroyAllWindows()
 
-def reduce_noise(input_path, output_path):
-    cap = cv2.VideoCapture(input_path)
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(output_path, fourcc, cap.get(cv2.CAP_PROP_FPS), (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
-
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        denoised_frame = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 21)
-        out.write(denoised_frame)
-
-    cap.release()
-    out.release()
+if __name__ == "__main__":
+    start_video_processing()
