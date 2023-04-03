@@ -1,79 +1,70 @@
-import sys
-import json
+import tkinter as tk
 import requests
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
-import input_capture
+import threading
 import video_processing
+import input_capture
 
-class RegistrationDemo(QWidget):
-    def __init__(self):
-        super().__init__()
+# Initialize the main application window
+root = tk.Tk()
+root.title("Dante-ViSOR Client")
 
-        self.init_ui()
+# Define start_capture function to run video_processing and input_capture in parallel
+def start_capture():
+    video_thread = threading.Thread(target=video_processing.start_video_processing)
+    input_thread = threading.Thread(target=input_capture.start_input_capture)
 
-    def init_ui(self):
-        self.setWindowTitle('Registration Demo')
+    video_thread.start()
+    input_thread.start()
 
-        vbox = QVBoxLayout()
+    video_thread.join()
+    input_thread.join()
 
-        self.name_label = QLabel('Name:')
-        self.name_input = QLineEdit()
+# Function to send registration data
+def register():
+    name = name_entry.get()
+    email = email_entry.get()
+    username = username_entry.get()
 
-        self.email_label = QLabel('Email:')
-        self.email_input = QLineEdit()
+    if not (name and email and username):
+        return
 
-        self.username_label = QLabel('Username:')
-        self.username_input = QLineEdit()
+    data = {
+        "name": name,
+        "email": email,
+        "username": username
+    }
 
-        self.register_button = QPushButton('Register')
-        self.register_button.clicked.connect(self.register)
+    response = requests.post("https://yourserver.com/register", json=data)
+    if response.status_code == 200:
+        print("Registration successful!")
+    else:
+        print("Registration failed:", response.status_code)
 
-        vbox.addWidget(self.name_label)
-        vbox.addWidget(self.name_input)
-        vbox.addWidget(self.email_label)
-        vbox.addWidget(self.email_input)
-        vbox.addWidget(self.username_label)
-        vbox.addWidget(self.username_input)
-        vbox.addWidget(self.register_button)
+# Create GUI components
+name_label = tk.Label(root, text="Name:")
+name_entry = tk.Entry(root)
 
-        self.setLayout(vbox)
+email_label = tk.Label(root, text="Email:")
+email_entry = tk.Entry(root)
 
-    def register(self):
-        name = self.name_input.text()
-        email = self.email_input.text()
-        username = self.username_input.text()
+username_label = tk.Label(root, text="Username:")
+username_entry = tk.Entry(root)
 
-        if not name or not email or not username:
-            QMessageBox.warning(self, "Error", "Please fill in all fields.")
-            return
+register_button = tk.Button(root, text="Register", command=register)
+start_capture_button = tk.Button(root, text="Start Capture", command=start_capture)
 
-        user_data = {
-            'name': name,
-            'email': email,
-            'username': username
-        }
+# Add GUI components to the main window
+name_label.grid(row=0, column=0)
+name_entry.grid(row=0, column=1)
 
-        # Send user_data to your server for processing and authentication
-        server_url = 'https://yourserver.com/api/register'  # Replace this with your server's API endpoint
-        headers = {'Content-Type': 'application/json'}
+email_label.grid(row=1, column=0)
+email_entry.grid(row=1, column=1)
 
-        try:
-            response = requests.post(server_url, data=json.dumps(user_data), headers=headers)
+username_label.grid(row=2, column=0)
+username_entry.grid(row=2, column=1)
 
-            if response.status_code == 200:
-                QMessageBox.information(self, "Success", "Registration successful!")
+register_button.grid(row=3, column=0, columnspan=2)
+start_capture_button.grid(row=4, column=0, columnspan=2)
 
-                # Start video processing and input capture
-                video_processing.start_video_processing()
-                input_capture.start_input_capture()
-
-            else:
-                QMessageBox.warning(self, "Error", f"Registration failed. Error code: {response.status_code}")
-
-        except requests.exceptions.RequestException as e:
-            QMessageBox.warning(self, "Error", f"Failed to connect to the server. Error: {e}")
-
-app = QApplication(sys.argv)
-demo = RegistrationDemo()
-demo.show()
-sys.exit(app.exec_())
+# Start the main event loop
+root.mainloop()
