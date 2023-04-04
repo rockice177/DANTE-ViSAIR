@@ -1,55 +1,67 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QLabel
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QLabel, QPlainTextEdit, QTabWidget
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        super(MainWindow, self).__init__()
-        self.init_ui()
+        super().__init__()
 
-    def init_ui(self):
+        self.setWindowTitle("Game Analyzer")
+        self.setGeometry(100, 100, 800, 600)
+
+        main_widget = QWidget()
         main_layout = QVBoxLayout()
 
-        top_layout = QVBoxLayout()
-        status_label = QLabel('Status: Idle')
-        top_layout.addWidget(status_label)
+        # Header
+        header = QLabel("Game Analyzer")
+        header.setStyleSheet("font-size: 24px; font-weight: bold;")
+        main_layout.addWidget(header)
 
-        bottom_layout = QHBoxLayout()
-        start_button = QPushButton('Start')
-        start_button.clicked.connect(self.start_clicked)
-        bottom_layout.addWidget(start_button)
+        # Tabs
+        tab_widget = QTabWidget()
+        tab1 = QWidget()
+        tab2 = QWidget()
+        tab3 = QWidget()
+        tab_widget.addTab(tab1, "Dashboard")
+        tab_widget.addTab(tab2, "Settings")
+        tab_widget.addTab(tab3, "About")
+        main_layout.addWidget(tab_widget)
 
-        stop_button = QPushButton('Stop')
-        stop_button.clicked.connect(self.stop_clicked)
-        bottom_layout.addWidget(stop_button)
+        # Dashboard Tab
+        vbox1 = QVBoxLayout()
+        start_button = QPushButton("Start")
+        vbox1.addWidget(start_button)
+        pause_button = QPushButton("Pause")
+        vbox1.addWidget(pause_button)
+        stop_button = QPushButton("Stop")
+        vbox1.addWidget(stop_button)
+        debug_button = QPushButton("Toggle Debug")
+        vbox1.addWidget(debug_button)
+        tab1.setLayout(vbox1)
 
-        pause_button = QPushButton('Pause')
-        pause_button.clicked.connect(self.pause_clicked)
-        bottom_layout.addWidget(pause_button)
+        # Settings Tab
+        vbox2 = QVBoxLayout()
+        settings_label = QLabel("Settings")
+        vbox2.addWidget(settings_label)
+        settings_area = QPlainTextEdit()
+        vbox2.addWidget(settings_area)
+        tab2.setLayout(vbox2)
 
-        debug_button = QPushButton('Debug')
-        debug_button.clicked.connect(self.debug_clicked)
-        bottom_layout.addWidget(debug_button)
+        # About Tab
+        vbox3 = QVBoxLayout()
+        about_label = QLabel("About Game Analyzer")
+        vbox3.addWidget(about_label)
+        tab3.setLayout(vbox3)
 
-        main_layout.addLayout(top_layout)
-        main_layout.addLayout(bottom_layout)
+        main_widget.setLayout(main_layout)
+        self.setCentralWidget(main_widget)
 
-        central_widget = QWidget()
-        central_widget.setLayout(main_layout)
-        self.setCentralWidget(central_widget)
 
-    def start_clicked(self):
-        print("Start button clicked")
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    with open('adrenalin_style.css', 'r') as file:
+        css = file.read()
+        app.setStyleSheet(css)
+    mainWin = MainWindow()
+    mainWin.show()
+    sys.exit(app.exec_())
 
-    def stop_clicked(self):
-        print("Stop button clicked")
-
-    def pause_clicked(self):
-        print("Pause button clicked")
-
-    def debug_clicked(self):
-        print("Debug button clicked")
-
-if __name__ == '__main__':
-    app = QApplication([])
-    main_win = MainWindow()
-    main_win.show()
-    app.exec_()
