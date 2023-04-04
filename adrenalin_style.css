@@ -1,0 +1,54 @@
+QWidget {
+    background-color: #1c1c1c;
+    color: white;
+    font-size: 12px;
+}
+
+QLabel {
+    color: white;
+}
+
+QToolButton {
+    background-color: #0e53a7;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid #1c1c1c;
+    padding: 5px;
+    min-width: 100px;
+}
+
+QToolButton:hover {
+    background-color: #1c5dc9;
+}
+
+QToolButton:pressed {
+    background-color: #0b4081;
+}
+
+QLineEdit {
+    background-color: #2c2c2c;
+    border: 1px solid #404040;
+    padding: 2px;
+}
+
+QSlider::groove:horizontal {
+    height: 8px;
+    background: #2c2c2c;
+}
+
+QSlider::handle:horizontal {
+    background-color: #0e53a7;
+    width: 18px;
+    margin-top: -5px;
+    margin-bottom: -5px;
+    border: 1px solid #1c1c1c;
+}
+
+QSlider::handle:horizontal:hover {
+    background-color: #1c5dc9;
+}
+
+QSlider::handle:horizontal:pressed {
+    background-color: #0b4081;
+}
